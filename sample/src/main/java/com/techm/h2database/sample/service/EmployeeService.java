@@ -15,15 +15,16 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Value("${employee.employeeList.details}")
-    private String stringList;
+    private List<String> employeeNameList;
 
-    public Employee map() {
-        String[] tokens = stringList.split(",");
-        Employee result = new Employee(Integer.parseInt(tokens[0]),
-                tokens[1]);
-
-
-        return result;
+    public List<Employee> stringListToEmployeeListConversion() {
+        List<Employee> employeeList = new ArrayList<>();
+        for (String s : employeeNameList) {
+            Employee e = new Employee();
+            e.setName(s);
+            employeeList.add(e);
+        }
+        return employeeList;
     }
 
     public List<Employee> getAllEmployees() {
@@ -36,10 +37,15 @@ public class EmployeeService {
         return employeeRepository.findById(id).get();
     }
 
-    public Employee saveOrUpdate() {
-        Employee employees = map();
-        return employeeRepository.save(employees);
-
+    public List<Employee> saveOrUpdate(Employee employee) {
+        List<Employee> employeeList = stringListToEmployeeListConversion();
+        List<Employee> employeeList1 = new ArrayList<>();
+        for (Employee e : employeeList
+        ) {
+            employeeList1.add(employeeRepository.save(e));
+        }
+        employeeList1.add(employeeRepository.save(employee));
+        return employeeList1;
     }
 
 }
